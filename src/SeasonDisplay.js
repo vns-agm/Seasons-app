@@ -1,26 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import './SeasonDisplay.css';
-import { Container, Row, Col } from 'react-bootstrap';
-
-
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-};
-
-const center = {
-  lat: 0,
-  lng: 0,
-};
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import "./SeasonDisplay.css";
 
 function SeasonDisplay() {
   const getSeason = (lat, month) => {
     if (month > 2 && month < 9) {
-      return lat > 0 ? 'summer' : 'winter';
+      return lat > 0 ? "summer" : "winter";
     } else {
-      return lat > 0 ? 'winter' : 'summer';
+      return lat > 0 ? "winter" : "summer";
     }
   };
 
@@ -62,8 +50,13 @@ function SeasonDisplay() {
 
       const data = await results.json();
 
-      const placesWithDistance = data.results.map(place => {
-        const distance = calculateDistance(lat, lon, place.geocodes.main.latitude, place.geocodes.main.longitude);
+      const placesWithDistance = data.results.map((place) => {
+        const distance = calculateDistance(
+          lat,
+          lon,
+          place.geocodes.main.latitude,
+          place.geocodes.main.longitude
+        );
         return { ...place, distance };
       });
 
@@ -98,7 +91,7 @@ function SeasonDisplay() {
                 longitude: position.coords.longitude,
               });
               fetchWeather(position.coords.latitude, position.coords.longitude);
-              fetchPlaces(position.coords.latitude, position.coords.longitude); 
+              fetchPlaces(position.coords.latitude, position.coords.longitude);
             },
             (error) => {
               setError("Error getting geolocation: " + error.message);
@@ -113,13 +106,18 @@ function SeasonDisplay() {
     };
 
     fetchData();
-  }, []);
+  });
 
   useEffect(() => {
     if (location.latitude && location.longitude) {
       if (!mapRef.current) {
-        const mapInstance = L.map('map').setView([location.latitude, location.longitude], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
+        const mapInstance = L.map("map").setView(
+          [location.latitude, location.longitude],
+          13
+        );
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
+          mapInstance
+        );
         L.marker([location.latitude, location.longitude]).addTo(mapInstance);
         mapRef.current = mapInstance;
       } else {
@@ -146,19 +144,22 @@ function SeasonDisplay() {
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const earthRadius = 6371; 
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const earthRadius = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = earthRadius * c;
-    return distance.toFixed(1); 
+    return distance.toFixed(1);
   };
 
   const kelvinToCelsius = (tempKelvin) => {
-    return (tempKelvin - 273.15).toFixed(1); 
+    return (tempKelvin - 273.15).toFixed(1);
   };
 
   const mpsToKph = (windSpeedMps) => {
@@ -171,22 +172,29 @@ function SeasonDisplay() {
         <div className="map-container">
           <div id="map" className="leaflet-map"></div>
         </div>
-        <div className={`weather-details-container ${getSeason(location.latitude, new Date().getMonth() + 1)}`}>
+        <div
+          className={`weather-details-container ${getSeason(
+            location.latitude,
+            new Date().getMonth() + 1
+          )}`}
+        >
           {error ? (
             <p className="error">{error}</p>
           ) : (
             <div className="content">
               <div className="weather-details">
-                <h2 className="weather-title">{greeting} <br />
-                  Here's the detail of Weather around you.
-                  Have a great day!</h2>
+                <h2 className="weather-title">
+                  {greeting} <br />
+                  Here's the detail of Weather around you. Have a great day!
+                </h2>
                 {weather && (
                   <div>
                     <p className="weather-description">
                       <b>Weather</b>: {weather.weather[0].description}
                     </p>
                     <p className="weather-temperature">
-                      <b>Temperature</b>: {kelvinToCelsius(weather.main.temp)} °C
+                      <b>Temperature</b>: {kelvinToCelsius(weather.main.temp)}{" "}
+                      °C
                     </p>
                     <p className="weather-temperature">
                       <b>Humidity</b>: {weather.main.humidity}
@@ -200,7 +208,16 @@ function SeasonDisplay() {
 
               <div style={{ marginTop: "20px" }} className="weather-details">
                 <h2 className="weather-title">
-                  What are you seeking? Let <a href="https://agam-portfolio.web.app/" target="_blank" rel="noopener noreferrer">Agam Srivastava</a> assist you in discovering the finest locales around you tailored to your plans.
+                  What are you seeking? Let{" "}
+                  <a
+                    href="https://agam-portfolio.web.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Agam Srivastava
+                  </a>{" "}
+                  assist you in discovering the finest locales around you
+                  tailored to your plans.
                 </h2>
 
                 <div className="search-container">
@@ -215,9 +232,7 @@ function SeasonDisplay() {
                     Search
                   </button>
                 </div>
-                <div>
-
-                </div>
+                <div></div>
                 {places.length > 0 && (
                   <div>
                     <h2 className="places-title">Nearby Places</h2>
@@ -226,8 +241,12 @@ function SeasonDisplay() {
                         {places.map((place) => (
                           <li key={place.fsq_id} className="place-item">
                             <div>
-                              <p>{place.name} ({place.distance}Km)</p>
-                              <p><b>Address : {place.location.address}</b></p>
+                              <p>
+                                {place.name} ({place.distance}Km)
+                              </p>
+                              <p>
+                                <b>Address : {place.location.address}</b>
+                              </p>
                             </div>
                           </li>
                         ))}
@@ -241,7 +260,14 @@ function SeasonDisplay() {
         </div>
       </div>
       <footer className="footer text-center">
-        Designed and developed by <a href="https://agam-portfolio.web.app/" target="_blank" rel="noopener noreferrer">Agam Srivastava</a>
+        Designed and developed by{" "}
+        <a
+          href="https://agam-portfolio.web.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Agam Srivastava
+        </a>
       </footer>
     </>
   );
