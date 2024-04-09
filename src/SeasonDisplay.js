@@ -29,12 +29,15 @@ function SeasonDisplay() {
   const [error, setError] = useState(null);
   const [places, setPlaces] = useState([]);
   const [greeting, setGreeting] = useState("");
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState();
+  const [searchInitiated, setSearchInitiated] = useState(false);
   const mapRef = useRef(null);
 
   const handleKeywordChange = (e) => {
     setKeyword(e.target.value);
   };
+
+  console.log(places, "020202");
 
   const fetchPlaces = async (lat, lon, keyword) => {
     try {
@@ -73,8 +76,15 @@ function SeasonDisplay() {
     }
   };
   const handleSearch = () => {
-    fetchPlaces(location.latitude, location.longitude, keyword);
+    if (keyword.trim() === "") {
+      setPlaces([]);
+      setSearchInitiated(false);
+    } else {
+      fetchPlaces(location.latitude, location.longitude, keyword);
+      setSearchInitiated(true);
+    }
   };
+
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -98,7 +108,7 @@ function SeasonDisplay() {
                 longitude: position.coords.longitude,
               });
               fetchWeather(position.coords.latitude, position.coords.longitude);
-              fetchPlaces(position.coords.latitude, position.coords.longitude); 
+              fetchPlaces(position.coords.latitude, position.coords.longitude);
             },
             (error) => {
               setError("Error getting geolocation: " + error.message);
@@ -146,7 +156,7 @@ function SeasonDisplay() {
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const earthRadius = 6371; 
+    const earthRadius = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -154,11 +164,11 @@ function SeasonDisplay() {
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = earthRadius * c;
-    return distance.toFixed(1); 
+    return distance.toFixed(1);
   };
 
   const kelvinToCelsius = (tempKelvin) => {
-    return (tempKelvin - 273.15).toFixed(1); 
+    return (tempKelvin - 273.15).toFixed(1);
   };
 
   const mpsToKph = (windSpeedMps) => {
@@ -176,7 +186,7 @@ function SeasonDisplay() {
             <p className="error">{error}</p>
           ) : (
             <div className="content">
-              <div className="weather-details">
+              <div style={{marginTop:"20px"}} className="weather-details">
                 <h2 className="weather-title">{greeting} <br />
                   Here's the detail of Weather around you.
                   Have a great day!</h2>
@@ -202,7 +212,6 @@ function SeasonDisplay() {
                 <h2 className="weather-title">
                   What are you seeking? Let <a href="https://agam-portfolio.web.app/" target="_blank" rel="noopener noreferrer">Agam Srivastava</a> assist you in discovering the finest locales around you tailored to your plans.
                 </h2>
-
                 <div className="search-container">
                   <input
                     type="text"
@@ -214,27 +223,31 @@ function SeasonDisplay() {
                   <button onClick={handleSearch} className="search-button">
                     Search
                   </button>
+                  <button onClick={() => {
+                    setPlaces([])
+                    setKeyword('')
+                    setSearchInitiated(false)
+                  }} className="search-button">
+                    Clear Search
+                  </button>
                 </div>
-                <div>
-
-                </div>
-                {places.length > 0 && (
+                {places.length > 0 ? (
                   <div>
-                    <h2 className="places-title">Nearby Places</h2>
+                    <h2 className="places-title"> Showing {keyword} around you</h2>
                     <div className="places-container">
                       <ul className="places-list">
                         {places.map((place) => (
                           <li key={place.fsq_id} className="place-item">
                             <div>
-                              <p>{place.name} ({place.distance}Km)</p>
-                              <p><b>Address : {place.location.address}</b></p>
+                              <p><b>{place.name}</b> ({place.distance}Km)</p>
+                              <b>Address : {place.location.address}</b>
                             </div>
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
-                )}
+                ) : searchInitiated && places.length === 0 ? `No search result for ${keyword}, Try something else` : null}
               </div>
             </div>
           )}

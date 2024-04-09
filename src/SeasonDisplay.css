@@ -24,7 +24,7 @@ body {
 /* Weather details styles */
 .weather-details {
   /* position: absolute;  */
-  max-height: 50vh;
+  /* max-height: 50vh; */
   padding: 20px; /* Add padding to the weather details */
   background-color: rgba(255, 255, 255, 0.7); /* Set background color with opacity */
   border-radius: 10px; /* Add border radius */
@@ -74,7 +74,8 @@ body {
 
 /* Leaflet map container */
 .leaflet-map {
-  width: 100%; /* Set map width to 100% */
+  margin: 5px;
+  width: 96%; /* Set map width to 100% */
   height: 100vh;; /* Set the initial height */
   margin-top: 20px; /* Add margin to separate from weather details */
   border-radius: 10px;
@@ -108,11 +109,6 @@ body {
   background-color: #0056b3;
 }
 
-.places-container {
-  max-height: 120px; /* Set your preferred height */
-  overflow-y: auto; /* Make the container scrollable */
-}
-
 .places-list {
   list-style-type: none;
   padding: 0;
@@ -120,7 +116,7 @@ body {
 
 .place-item {
   padding: 5px;
-  border-bottom: 1px solid #ccc; /* Add a border between items */
+  border-bottom: 2px solid grey; /* Add a border between items */
 }
 
 .places-title {
@@ -129,4 +125,46 @@ body {
 
 .footer {
   text-align: center;
+}
+
+/* Media queries for responsive design */
+@media screen and (max-width: 768px) {
+  .season-display-container {
+    flex-direction: column; /* Change layout to vertical for smaller screens */
+  }
+
+  .map-container {
+    width: 100%; /* Occupy full width on smaller screens */
+    height: 50vh; /* Adjust height for smaller screens */
+  }
+
+  .weather-details-container {
+    width: 100%; /* Occupy full width on smaller screens */
+    padding: 10px; /* Adjust padding for smaller screens */
+  }
+
+  .leaflet-map {
+    height: 50vh; /* Adjust map height for smaller screens */
+  }
+
+
+  .search-container {
+    flex-direction: column; /* Change layout to vertical for smaller screens */
+    align-items: stretch; /* Stretch items to occupy full width */
+  }
+
+  .search-button {
+    margin: 10px 0; /* Add margin top and bottom for search button */
+  }
+}
+
+.places-container {
+  /* max-height: 300px; Default maximum height */
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .places-container {
+    /* max-height: 200px; Adjust maximum height for smaller screens */
+  }
 }
